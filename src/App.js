@@ -1,20 +1,35 @@
 import "./style.scss";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken } from "./store/slice.js";
 
-import Search from "./components/search.jsx";
-import Artist from "./components/artist.jsx";
+import Search from "./pages/search.jsx";
+import Artist from "./pages/artist.jsx";
+
+// Redux persist
+// Автоплей музыки
+// Ограничения по 10 / 25 / 50 треков
+// Коректная проверка названия
+// Шрифты
+// Переключающиеся темы
+// Интернационализация
 
 function App() {
-  const [artistId, setArtistId] = useState();
-  const [token, setToken] = useState();
+  const dispatch = useDispatch();
 
-  let id = "a0b12e2325914386adf27fd5312d5f59";
-  let secret = "7b7cac440dd9433c9d5c62833b8c8910";
+  const [artist, setArtist] = useState();
+  //[token, setToken] = useState();
 
-  function handleChange(value) {
-    setArtistId(value);
+  function handleChange(id, name, image, followers, genres) {
+    setArtist({
+      name: name,
+      id: id,
+      image: image,
+      followers: followers,
+      genres: genres,
+    });
   }
 
   // получение токена
@@ -23,26 +38,28 @@ function App() {
     axios("https://accounts.spotify.com/api/token", {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "Basic " + btoa(id + ":" + secret),
+        Authorization: "Basic " + btoa(data.id + ":" + data.secret),
       },
       data: "grant_type=client_credentials",
       method: "POST",
-    }).then((response) => setToken(response.data.access_token));
-  }, [id, secret]);
+    }).then((response) => dispatch(setToken(response.data.access_token)));
+  }, []);
+
+  const state = useSelector((state) => state.state);
+
+  console.log(state);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={<Search token={token} onChange={handleChange} />}
-        />
-        <Route
-          path="/artist"
-          element={<Artist token={token} artistId={artistId} />}
-        />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route
+        path="/"
+        element={<Search token={token} onChange={handleChange} />}
+      />
+      <Route
+        path="/artist"
+        element={<Artist token={token} artist={artist} />}
+      />
+    </Routes>
   );
 }
 

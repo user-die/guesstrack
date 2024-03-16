@@ -1,54 +1,50 @@
 import axios from "axios";
 
-export function unique(array) {
-  return [...new Set(array)];
-}
-
-export function deleteRemix(array) {
-  return array.filter((el) => !el.includes("Remix") && !el.includes("Mix"));
-}
-
-export function shuffle(array) {
+export function shuffleTracks(array) {
   return array.sort(() => Math.random() - 0.5);
 }
 
-export function getRandom(array) {
-  let i = 0;
-  while (i < array.length) {
-    return array[i];
+export function checkAnswer(answer, rightAnswer, callback, func, addPoint) {
+  if (
+    answer.toUpperCase() === rightAnswer.toUpperCase().replace(/.\(.+\)/, "")
+  ) {
+    callback((value) => value + 1);
+    func("");
+    addPoint((value) => value + 1);
   }
 }
 
-export function getAlbums(offset, func, token, artistId) {
+export function searchPlaylist(artist, token, callback) {
   axios(
-    `https://api.spotify.com/v1/artists/${artistId}/albums?limit=50&offset=${offset}`,
+    `https://api.spotify.com/v1/search?query=this+is+${artist}&type=playlist&locale=ru-RU%2Cru%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7&offset=0&limit=20`,
     {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,
       },
     }
-  ).then((response) => func((albums) => [...albums, ...response.data.items]));
+  ).then((response) => {
+    axios(
+      response.data.playlists.items.filter(
+        (el) => el.owner.display_name === "Spotify"
+      )[0].tracks.href,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    ).then((response) => {
+      console.log(response.data.items.map((el) => el.track));
+      callback(response.data.items.map((el) => el.track));
+    });
+  });
 }
 
-export function searchArtist(func, search, token) {
+export function searchArtist(callback, search, token) {
   axios(`https://api.spotify.com/v1/search?type=artist&q=${search}`, {
     headers: {
       Authorization: "Bearer " + token,
     },
-  }).then((response) => func(response.data.artists.items));
-}
-
-export function getTracks(func, id, token) {
-  axios(`https://api.spotify.com/v1/albums/${id}/tracks`, {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  }).then((response) =>
-    func((oldArray) => [
-      ...oldArray,
-      ...response.data.items.map((item) => item.name),
-    ])
-  );
+  }).then((response) => callback(response.data.artists.items));
 }

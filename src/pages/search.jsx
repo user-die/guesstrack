@@ -13,7 +13,7 @@ function Search({ token, onChange }) {
   }, [search]);
 
   return (
-    <div className="App search">
+    <div className="search">
       <h1>Выберите исполнителя</h1>
       <form>
         <input
@@ -29,7 +29,13 @@ function Search({ token, onChange }) {
               className="list-item"
               to="/artist"
               onClick={() => {
-                onChange(element.id);
+                onChange(
+                  element.id,
+                  element.name,
+                  element.images[0],
+                  element.followers.total,
+                  element.genres
+                );
               }}
               key={element.id}
             >
@@ -38,7 +44,7 @@ function Search({ token, onChange }) {
                 <img className="img" src={element.images[0]["url"]}></img>
               )}
               <p>
-                Фоловеры{" "}
+                'Фоловеры: ' +{" "}
                 {Intl.NumberFormat("ru").format(element.followers.total)}
               </p>
               <p className="list-item-genres">
