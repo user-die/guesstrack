@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { shuffleTracks, checkAnswer, searchPlaylist } from "../functions";
-import axios from "axios";
+import { getPlaylist, shufleTracks } from "../store/slice";
+import { useDispatch, useSelector } from "react-redux";
 
 import Game from "../components/game";
 import Modal from "../components/modal";
 
-function Artist({ token, artist }) {
-  const [tracks, setTracks] = useState([]),
-    [start, setStart] = useState(false);
+function Artist() {
+  const [next, setNext] = useState(0);
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.state);
 
   useEffect(() => {
-    searchPlaylist(artist.name, token, setTracks);
-  }, [token]);
+    dispatch(getPlaylist());
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem("tracks", tracks);
-    shuffleTracks(tracks);
-  }, [tracks]);
+    dispatch(shufleTracks());
+  }, [state.loading]);
 
-  function hangleSubmit() {
-    setStart(true);
+  function nextChange() {
+    if (next + 1 !== state.tracks.length) setNext((value) => value + 1);
   }
 
   return (
     <div className="game">
-      <Modal artist={artist} start={start} onChange={hangleSubmit} />
-      <Game tracks={tracks} start={start} token={token} />
+      {(state.start === true && next + 1 === state.tracks.length) ||
+        (state.start === false && <Modal next={next} />)}
+      <Game next={next} nextChange={nextChange} />
     </div>
   );
 }

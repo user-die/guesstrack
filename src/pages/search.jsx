@@ -1,24 +1,44 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { searchArtist } from "../functions";
+import { setArtist, setStart, formHandleChange } from "../store/slice";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import ArtistCard from "../components/artistCard";
 
-function Search({ token, onChange }) {
-  const [search, setSearch] = useState(""),
-    [artistList, setArtistList] = useState();
+function Search() {
+  const [artistList, setArtistList] = useState([]);
+
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.state);
 
   // поиск исполнителей
 
   useEffect(() => {
-    if (search !== "") searchArtist(setArtistList, search, token);
-  }, [search]);
+    if (state.searchForm !== "")
+      searchArtist(setArtistList, state.searchForm, state.token);
+
+    if (state.searchForm === "") setArtistList([]);
+  }, [state.searchForm]);
+
+  useEffect(() => {
+    dispatch(setStart(false));
+  }, []);
+
+  function searchArtist(callback, search, token) {
+    axios(`https://api.spotify.com/v1/search?type=artist&q=${search}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }).then((response) => callback(response.data.artists.items));
+  }
 
   return (
     <div className="search">
       <h1>Выберите исполнителя</h1>
       <form>
         <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={state.searchForm}
+          onChange={(e) => dispatch(formHandleChange(e.target.value))}
         ></input>
       </form>
 
@@ -28,15 +48,17 @@ function Search({ token, onChange }) {
             <NavLink
               className="list-item"
               to="/artist"
-              onClick={() => {
-                onChange(
-                  element.id,
-                  element.name,
-                  element.images[0],
-                  element.followers.total,
-                  element.genres
-                );
-              }}
+              onClick={() =>
+                dispatch(
+                  setArtist({
+                    id: element.id,
+                    name: element.name,
+                    image: element.images[0],
+                    followers: element.followers.total,
+                    genres: element.genres,
+                  })
+                )
+              }
               key={element.id}
             >
               <p>{element.name}</p>
@@ -44,7 +66,7 @@ function Search({ token, onChange }) {
                 <img className="img" src={element.images[0]["url"]}></img>
               )}
               <p>
-                'Фоловеры: ' +{" "}
+                Фоловеры:{" "}
                 {Intl.NumberFormat("ru").format(element.followers.total)}
               </p>
               <p className="list-item-genres">

@@ -1,32 +1,64 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
+import { setStart, setCountTracks } from "../store/slice";
 
-export default function Modal({ artist, start, onChange }) {
-  console.log(start);
+import ArtistCard from "./artistCard";
+import ResultModal from "./resultModal";
+
+export default function Modal({ next }) {
+  const artist = useSelector((state) => state.state.artist);
+  const start = useSelector((state) => state.state.start);
+  const tracks = useSelector((state) => state.state.tracks);
+  const state = useSelector((state) => state.state);
+  const dispatch = useDispatch();
+
   return (
     <AnimatePresence>
-      {start === false && (
-        <motion.div
-          className="modal"
-          initial={{ opacity: 0, y: 0 }}
-          animate={{ opacity: 1, y: 30, transition: { duration: 0.8 } }}
-          exit={{ opacity: 0, y: 0, transition: { duration: 0.8 } }}
-        >
+      <motion.div
+        className="modal"
+        initial={{ opacity: 0, y: 0 }}
+        animate={{ opacity: 1, y: 30, transition: { duration: 0.8 } }}
+        exit={{ opacity: 0, y: 0, transition: { duration: 0.8 } }}
+      >
+        {start === false && (
           <div>
-            {artist.image && <img src={artist.image["url"]}></img>}
-            <h1>{artist.name}</h1>
-            <p>Фоловеры: {Intl.NumberFormat("ru").format(artist.followers)}</p>
-            <p className="list-item-genres">
-              {artist.genres.length == 0 || "Жанры: " + artist.genres.join(" ")}
-            </p>
+            <ArtistCard artist={artist} />
+
+            <h2>Выберите количество треков</h2>
+            <div className="buttons">
+              <button
+                className={state.countTracks === 10 && "active"}
+                onClick={() => dispatch(setCountTracks(10))}
+              >
+                10
+              </button>
+              <button
+                className={state.countTracks === 25 && "active"}
+                onClick={() => dispatch(setCountTracks(25))}
+              >
+                25
+              </button>
+              <button
+                className={state.countTracks > 25 && "active"}
+                onClick={() => dispatch(setCountTracks(tracks.length))}
+              >
+                Все
+              </button>
+            </div>
+
+            <div className="buttons">
+              <NavLink onClick={() => dispatch(setStart(true))}>Начать</NavLink>
+              <NavLink className="active" to="/">
+                Назад
+              </NavLink>
+            </div>
           </div>
-          <div className="buttons">
-            <NavLink onClick={onChange}>Начать</NavLink>
-            <NavLink to="/">Назад</NavLink>
-          </div>
-        </motion.div>
-      )}
+        )}
+
+        {start === true && next + 1 === tracks.length && <ResultModal />}
+      </motion.div>
     </AnimatePresence>
   );
 }

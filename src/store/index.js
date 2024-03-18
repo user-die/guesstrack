@@ -1,8 +1,4 @@
-import {
-  configureStore,
-  combineReducers,
-  applyMiddleware,
-} from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import {
   persistStore,
   persistReducer,
@@ -16,7 +12,6 @@ import {
 import storage from "redux-persist/lib/storage";
 
 import reducer from "./slice";
-import { thunk } from "redux-thunk";
 
 const rootReducer = combineReducers({
   state: reducer,
@@ -35,7 +30,7 @@ const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
 
-      //{ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],},
+      //ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
     }),
 });
 

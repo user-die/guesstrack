@@ -1,29 +1,49 @@
 import React, { useState, useEffect } from "react";
-import { checkAnswer } from "../functions";
+import { useDispatch, useSelector } from "react-redux";
+import { addPoints } from "../store/slice";
 
-export default function Game({ tracks, start, token }) {
+export default function Game({ next, nextChange }) {
   const [answer, setAnswer] = useState(""),
-    [points, setPoints] = useState(0),
-    [next, setNext] = useState(0),
     [currentTrack, setCurrentTrack] = useState(0);
 
+  const dispatch = useDispatch();
+
+  const tracks = useSelector((state) => state.state.tracks);
+  const state = useSelector((state) => state.state);
+
+  console.log(next);
+
   useEffect(() => {
-    if (tracks.length > 0)
+    if (tracks.length > 0 && next < tracks.length)
       setCurrentTrack({
         name: tracks[next].name,
         id: tracks[next].id,
         uri: tracks[next].uri,
       });
-  }, [start, next]);
+  }, [state.start, next]);
 
   useEffect(() => {
     if (currentTrack) {
-      checkAnswer(answer, currentTrack.name, setNext, setAnswer, setPoints);
+      if (
+        answer.toUpperCase() ===
+        currentTrack.name.toUpperCase().replace(/.\(.+\)/, "")
+      ) {
+        nextChange();
+        dispatch(addPoints());
+        setAnswer("");
+      }
     }
   }, [answer]);
 
   return (
-    <div class={start === false ? "overlay" : ""}>
+    <div
+      class={
+        state.start === false || next + 1 === state.tracks.length
+          ? "overlay"
+          : ""
+      }
+      style={{ position: "relative" }}
+    >
       {currentTrack && (
         <iframe
           id="iframe"
@@ -33,14 +53,8 @@ export default function Game({ tracks, start, token }) {
           loading="lazy"
         ></iframe>
       )}
-      <button
-        onClick={() => {
-          setNext((value) => value + 1);
-        }}
-      >
-        Дальше
-      </button>
-      <form action="">
+      <button onClick={() => nextChange()}>Дальше</button>
+      <form action="" onSubmit={(e) => e.preventDefault()}>
         <input
           value={answer}
           onChange={(e) => {
@@ -49,9 +63,8 @@ export default function Game({ tracks, start, token }) {
           type="text"
         />
       </form>
-
       <p>
-        Ваши очки : {points} / {tracks.length}
+        Ваши очки : {state.userPoints} / {tracks.length}
       </p>
     </div>
   );
