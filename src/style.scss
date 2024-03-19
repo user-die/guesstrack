@@ -196,6 +196,12 @@ body {
   }
 }
 
+.overlap {
+  z-index: 1;
+  position: absolute;
+  background-color: #282828;
+}
+
 /*
 .pages-enter {
   opacity: 0;

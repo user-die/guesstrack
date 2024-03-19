@@ -34,6 +34,10 @@ const slice = createSlice({
       state.countTracks = action.payload;
     },
 
+    sliceTracks: (state) => {
+      state.tracks = state.tracks.slice(0, state.countTracks);
+    },
+
     formHandleChange: (state, action) => {
       state.searchForm = action.payload;
     },
@@ -50,10 +54,13 @@ const slice = createSlice({
       state.userPoints = 0;
     },
   },
+
   extraReducers: (builder) => {
+    /*
     builder.addCase(fetchToken.pending, (state) => {
       state.loading = true;
     });
+    */
 
     builder.addCase(fetchToken.fulfilled, (state, action) => {
       state.loading = false;
@@ -128,6 +135,7 @@ export const {
   addPoints,
   addNext,
   resetUserPoints,
+  sliceTracks,
 } = slice.actions;
 
 export default slice.reducer;

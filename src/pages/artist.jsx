@@ -7,26 +7,22 @@ import Modal from "../components/modal";
 
 function Artist() {
   const [next, setNext] = useState(0);
+  const [finish, setFinish] = useState(false);
+
   const dispatch = useDispatch();
   const state = useSelector((state) => state.state);
 
-  useEffect(() => {
-    dispatch(getPlaylist());
-  }, []);
+  console.log("artist");
 
-  useEffect(() => {
-    dispatch(shufleTracks());
-  }, [state.loading]);
-
-  function nextChange() {
-    if (next + 1 !== state.tracks.length) setNext((value) => value + 1);
+  function handleChange() {
+    setFinish(true);
   }
 
   return (
     <div className="game">
-      {(state.start === true && next + 1 === state.tracks.length) ||
-        (state.start === false && <Modal next={next} />)}
-      <Game next={next} nextChange={nextChange} />
+      {(state.start === true && finish) ||
+        (state.start === false && <Modal finish={finish} />)}
+      <Game handleChange={handleChange} />
     </div>
   );
 }

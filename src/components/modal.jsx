@@ -7,7 +7,7 @@ import { setStart, setCountTracks } from "../store/slice";
 import ArtistCard from "./artistCard";
 import ResultModal from "./resultModal";
 
-export default function Modal({ next }) {
+export default function Modal({ finish }) {
   const artist = useSelector((state) => state.state.artist);
   const start = useSelector((state) => state.state.start);
   const tracks = useSelector((state) => state.state.tracks);
@@ -57,7 +57,7 @@ export default function Modal({ next }) {
           </div>
         )}
 
-        {start === true && next + 1 === tracks.length && <ResultModal />}
+        {start === true && finish && <ResultModal />}
       </motion.div>
     </AnimatePresence>
   );
