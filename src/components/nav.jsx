@@ -5,10 +5,10 @@ export default function Nav() {
   return (
     <nav className="nav">
       <NavLink to="/">
-        <p>На главную</p>
+        <p>К поиску</p>
       </NavLink>
       <NavLink to="/main">
-        <p>К поиску</p>
+        <p>На главную</p>
       </NavLink>
     </nav>
   );
