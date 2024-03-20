@@ -178,7 +178,6 @@ body {
   padding: 20px;
   border-radius: 10px;
 
-  a,
   button {
     display: block;
     color: white;
@@ -200,6 +199,17 @@ body {
   z-index: 1;
   position: absolute;
   background-color: #282828;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+
+  a {
+    text-decoration: none;
+    color: white;
+  }
 }
 
 /*

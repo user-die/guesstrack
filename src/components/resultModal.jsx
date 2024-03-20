@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { resetUserPoints } from "../store/slice";
+import { resetUserPoints, resetNext } from "../store/slice";
 
 export default function ResultModal() {
   const points = useSelector((state) => state.state.userPoints);
@@ -13,7 +13,13 @@ export default function ResultModal() {
         <NavLink to="/" onClick={() => dispatch(resetUserPoints())}>
           К поиску
         </NavLink>
-        <NavLink to="/artist" onClick={() => dispatch(resetUserPoints())}>
+        <NavLink
+          to="/artist"
+          onClick={() => {
+            dispatch(resetUserPoints());
+            dispatch(resetNext());
+          }}
+        >
           Пройти снова
         </NavLink>
       </div>

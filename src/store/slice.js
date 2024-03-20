@@ -26,10 +26,6 @@ const slice = createSlice({
       state.start = action.payload;
     },
 
-    shufleTracks: (state) => {
-      state.tracks = state.tracks.sort(() => Math.random() - 0.5);
-    },
-
     setCountTracks: (state, action) => {
       state.countTracks = action.payload;
     },
@@ -53,14 +49,16 @@ const slice = createSlice({
     resetUserPoints: (state) => {
       state.userPoints = 0;
     },
+
+    resetNext: (state) => {
+      state.next = 0;
+    },
   },
 
   extraReducers: (builder) => {
-    /*
     builder.addCase(fetchToken.pending, (state) => {
       state.loading = true;
     });
-    */
 
     builder.addCase(fetchToken.fulfilled, (state, action) => {
       state.loading = false;
@@ -74,6 +72,10 @@ const slice = createSlice({
     builder.addCase(getPlaylist.fulfilled, (state, action) => {
       state.loading = false;
       state.tracks = action.payload;
+
+      state.tracks = state.tracks.sort(() => Math.random() - 0.5);
+
+      state.tracks = state.tracks.slice(0, state.countTracks);
     });
   },
 });
@@ -129,7 +131,7 @@ export const getPlaylist = createAsyncThunk(
 export const {
   setArtist,
   setStart,
-  shufleTracks,
+  resetNext,
   setCountTracks,
   formHandleChange,
   addPoints,

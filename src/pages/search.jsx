@@ -4,6 +4,7 @@ import { setArtist, setStart, formHandleChange } from "../store/slice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import ArtistCard from "../components/artistCard";
+import Nav from "../components/nav";
 
 function Search() {
   const [artistList, setArtistList] = useState([]);
@@ -34,6 +35,7 @@ function Search() {
 
   return (
     <div className="search">
+      <Nav />
       <h1>Выберите исполнителя</h1>
       <form>
         <input
@@ -71,7 +73,7 @@ function Search() {
               </p>
               <p className="list-item-genres">
                 {element.genres.length == 0 ||
-                  "Жанры: " + element.genres.join(" ")}
+                  "Жанры: " + element.genres.join(", ")}
               </p>
             </NavLink>
           ))}

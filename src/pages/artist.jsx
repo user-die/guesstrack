@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPlaylist, shufleTracks } from "../store/slice";
+import { getPlaylist } from "../store/slice";
 import { useDispatch, useSelector } from "react-redux";
 
 import Game from "../components/game";
@@ -12,7 +12,9 @@ function Artist() {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.state);
 
-  console.log("artist");
+  useEffect(() => {
+    dispatch(getPlaylist());
+  }, []);
 
   function handleChange() {
     setFinish(true);
@@ -20,9 +22,11 @@ function Artist() {
 
   return (
     <div className="game">
-      {(state.start === true && finish) ||
-        (state.start === false && <Modal finish={finish} />)}
-      <Game handleChange={handleChange} />
+      {state.start === false || state.next + 1 === state.tracks.length ? (
+        <Modal finish={finish} />
+      ) : (
+        <Game handleChange={handleChange} />
+      )}
     </div>
   );
 }

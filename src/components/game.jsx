@@ -1,34 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addPoints,
-  sliceTracks,
-  getPlaylist,
-  shufleTracks,
-} from "../store/slice";
+import { addPoints, addNext } from "../store/slice";
+import Nav from "./nav";
 
 export default function Game({ handleChange }) {
   const [answer, setAnswer] = useState("");
-  const [next, setNext] = useState(0);
+
+  const [currentTrack, setCurrentTrack] = useState();
 
   const dispatch = useDispatch();
 
   const tracks = useSelector((state) => state.state.tracks);
   const state = useSelector((state) => state.state);
-
-  const currentTrack = {
-    name: tracks[next].name,
-    id: tracks[next].id,
-    uri: tracks[next].uri,
-  };
+  console.log("game");
 
   useEffect(() => {
-    dispatch(getPlaylist());
-
-    dispatch(shufleTracks());
-
-    dispatch(sliceTracks());
-  }, [state.start]);
+    setCurrentTrack({
+      name: tracks[state.next].name,
+      id: tracks[state.next].id,
+      uri: tracks[state.next].uri,
+    });
+  }, [state.next]);
 
   useEffect(() => {
     if (currentTrack) {
@@ -37,28 +29,26 @@ export default function Game({ handleChange }) {
         currentTrack.name.toUpperCase().replace(/.\(.+\)/, "")
       ) {
         dispatch(addPoints());
+        dispatch(addNext());
         setAnswer("");
       }
     }
   }, [answer]);
 
   useEffect(() => {
-    if (next + 1 === state.tracks.length) handleChange();
-  }, [next]);
-
-  console.log(1, state.countTracks);
-  console.log(2, state.tracks.length);
-  //console.log("game");
+    if (state.next + 1 === state.tracks.length) handleChange();
+  }, [state.next]);
 
   return (
     <div
       className={
-        state.start === false || next + 1 === state.tracks.length
+        state.start === false || state.next + 1 === state.tracks.length
           ? "overlay"
           : ""
       }
       style={{ position: "relative" }}
     >
+      <Nav />
       <div
         style={{ height: "275px", width: "348px" }}
         //className="overlap"
@@ -77,12 +67,11 @@ export default function Game({ handleChange }) {
           src={`https://open.spotify.com/embed/track/${currentTrack.id}?utm_source=generator&theme=0`}
           width="100%"
           height="352"
-          allowFullScreen=""
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"
         ></iframe>
       )}
-      <button onClick={() => setNext((value) => value + 1)}>Дальше</button>
+      <button onClick={() => dispatch(addNext())}>Дальше</button>
       <form action="" onSubmit={(e) => e.preventDefault()}>
         <input
           value={answer}

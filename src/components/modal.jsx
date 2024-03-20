@@ -2,7 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
-import { setStart, setCountTracks } from "../store/slice";
+import {
+  setStart,
+  setCountTracks,
+  resetUserPoints,
+  resetNext,
+} from "../store/slice";
 
 import ArtistCard from "./artistCard";
 import ResultModal from "./resultModal";
@@ -42,14 +47,22 @@ export default function Modal({ finish }) {
               </button>
               <button
                 className={state.countTracks > 25 && "active"}
-                onClick={() => dispatch(setCountTracks(tracks.length))}
+                onClick={() => dispatch(setCountTracks(50))}
               >
                 Все
               </button>
             </div>
 
             <div className="buttons">
-              <NavLink onClick={() => dispatch(setStart(true))}>Начать</NavLink>
+              <NavLink
+                onClick={() => {
+                  dispatch(resetNext());
+                  dispatch(setStart(true));
+                  dispatch(resetUserPoints());
+                }}
+              >
+                Начать
+              </NavLink>
               <NavLink className="active" to="/">
                 Назад
               </NavLink>
@@ -57,7 +70,9 @@ export default function Modal({ finish }) {
           </div>
         )}
 
-        {start === true && finish && <ResultModal />}
+        {start === true && state.next + 1 === state.tracks.length && (
+          <ResultModal />
+        )}
       </motion.div>
     </AnimatePresence>
   );
