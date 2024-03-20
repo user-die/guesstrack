@@ -70,7 +70,7 @@ export default function Modal({ finish }) {
           </div>
         )}
 
-        {start === true && state.next + 1 === state.tracks.length && (
+        {start === true && state.next === state.tracks.length && (
           <ResultModal />
         )}
       </motion.div>

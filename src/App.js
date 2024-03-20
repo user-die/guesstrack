@@ -5,13 +5,10 @@ import { useDispatch } from "react-redux";
 import { fetchToken } from "./store/slice.js";
 import Search from "./pages/search.jsx";
 import Artist from "./pages/artist.jsx";
-import data from "./store/config.js";
 
-// Автоплей музыки
-// Ограничения по 10 / 25 / 50 треков
+// После обновления сохранять треки
 // Сделать таймер
 // Коректная проверка названия
-// Шрифты
 // Переключающиеся темы
 // Интернационализация (EN, SPain)
 // Обработка ошибок
@@ -21,7 +18,7 @@ function App() {
 
   useEffect(() => {
     dispatch(fetchToken());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Routes>

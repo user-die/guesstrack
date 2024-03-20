@@ -8,7 +8,6 @@ const slice = createSlice({
     token: "",
     searchForm: "",
     artist: "",
-    artistList: [],
     error: "",
     loading: false,
     start: false,
@@ -56,18 +55,22 @@ const slice = createSlice({
   },
 
   extraReducers: (builder) => {
+    /*
     builder.addCase(fetchToken.pending, (state) => {
       state.loading = true;
     });
+    */
 
     builder.addCase(fetchToken.fulfilled, (state, action) => {
       state.loading = false;
       state.token = action.payload;
     });
 
+    /*
     builder.addCase(getPlaylist.pending, (state) => {
       state.loading = true;
     });
+    */
 
     builder.addCase(getPlaylist.fulfilled, (state, action) => {
       state.loading = false;

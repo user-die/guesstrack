@@ -3,23 +3,24 @@ import { NavLink } from "react-router-dom";
 import { setArtist, setStart, formHandleChange } from "../store/slice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import ArtistCard from "../components/artistCard";
 import Nav from "../components/nav";
 
-function Search() {
+export default function Search() {
   const [artistList, setArtistList] = useState([]);
 
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.state);
+  const token = useSelector((state) => state.state.token);
+  const search = useSelector((state) => state.state.searchForm);
 
   // поиск исполнителей
 
-  useEffect(() => {
-    if (state.searchForm !== "")
-      searchArtist(setArtistList, state.searchForm, state.token);
+  console.log("search");
 
-    if (state.searchForm === "") setArtistList([]);
-  }, [state.searchForm]);
+  useEffect(() => {
+    if (search !== "") searchArtist(setArtistList, search, token);
+
+    if (search === "") setArtistList([]);
+  }, [search]);
 
   useEffect(() => {
     dispatch(setStart(false));
@@ -33,16 +34,31 @@ function Search() {
     }).then((response) => callback(response.data.artists.items));
   }
 
+  const upStyle = {
+    top: "40%",
+    animation: "upAnimation 450ms ease-in",
+  };
+  const downStyle = {
+    animation: "downAnimation 450ms ease-out",
+  };
+
   return (
     <div className="search">
       <Nav />
-      <h1>Выберите исполнителя</h1>
-      <form>
-        <input
-          value={state.searchForm}
-          onChange={(e) => dispatch(formHandleChange(e.target.value))}
-        ></input>
-      </form>
+
+      <span
+        className="search-anim"
+        style={artistList.length === 0 ? upStyle : downStyle}
+      >
+        <h1>Выберите исполнителя</h1>
+        <form>
+          <input
+            name="search"
+            value={search}
+            onChange={(e) => dispatch(formHandleChange(e.target.value))}
+          ></input>
+        </form>
+      </span>
 
       <div className="list">
         {artistList &&
@@ -81,5 +97,3 @@ function Search() {
     </div>
   );
 }
-
-export default Search;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addPoints, addNext } from "../store/slice";
+import { addPoints, addNext, getPlaylist } from "../store/slice";
 import Nav from "./nav";
 
 export default function Game({ handleChange }) {
@@ -12,7 +12,10 @@ export default function Game({ handleChange }) {
 
   const tracks = useSelector((state) => state.state.tracks);
   const state = useSelector((state) => state.state);
-  console.log("game");
+
+  useEffect(() => {
+    dispatch(getPlaylist());
+  }, []);
 
   useEffect(() => {
     setCurrentTrack({
@@ -20,7 +23,7 @@ export default function Game({ handleChange }) {
       id: tracks[state.next].id,
       uri: tracks[state.next].uri,
     });
-  }, [state.next]);
+  }, [tracks, state.next]);
 
   useEffect(() => {
     if (currentTrack) {
@@ -35,6 +38,8 @@ export default function Game({ handleChange }) {
     }
   }, [answer]);
 
+  console.log("game");
+
   useEffect(() => {
     if (state.next + 1 === state.tracks.length) handleChange();
   }, [state.next]);
@@ -42,7 +47,7 @@ export default function Game({ handleChange }) {
   return (
     <div
       className={
-        state.start === false || state.next + 1 === state.tracks.length
+        state.start === false || state.next === state.tracks.length
           ? "overlay"
           : ""
       }

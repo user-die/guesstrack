@@ -212,6 +212,28 @@ body {
   }
 }
 
+.search-anim {
+  position: relative;
+}
+
+@keyframes upAnimation {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 40%;
+  }
+}
+
+@keyframes downAnimation {
+  0% {
+    top: 40%;
+  }
+  100% {
+    top: 0;
+  }
+}
+
 /*
 .pages-enter {
   opacity: 0;
